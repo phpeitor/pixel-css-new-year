@@ -1,4 +1,43 @@
+.logo {
+	width: 120px;
+	position: relative;
+	transform: rotate(-20deg) translate(20px, 20px);
+    top: 10px;
+    left: 10px;
+}
 
+.logo:before {
+	content: "";
+	display: block;
+	background: rgba(255, 255, 255, 0.4);
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	border: 1px dashed #fff;
+	border-radius: 5px;
+}
+
+.box {
+	background: #fff;
+	border-radius: 5px;
+	padding: 5px 5px;
+	box-shadow: 1px 13px 79px 4px rgba(0, 0, 0, 0.25);
+	position: relative;
+	transition: transform 0.4s;
+
+}
+
+.box img {
+	width: 100%;
+}
+
+.box:hover {
+	transform: translate(14%, 35%);
+
+}
+  
 .unicorn {
 	width: 6px;
 	height: 6px;
