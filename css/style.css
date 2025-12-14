@@ -1,11 +1,10 @@
 .bg-video {
     position: fixed;
-    top: 0;
-    left: 0;
+    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    display: none; 
+    display: none;
     z-index: -1;
 }
 
@@ -23,68 +22,47 @@ body {
     height: 100vh;
     flex-direction: column;
     text-align: center;
+    position: relative;
+    overflow: hidden;
 }
 
-.start-title {
-    font-size: 32px;
-    margin-bottom: 20px;
-}
-
-.ready-text {
-    font-size: 16px;
-    margin-bottom: 20px;
-}
-
-/* Wrapper centrado y responsive */
-.animation-wrapper {
-    display: none; /* oculto al inicio */
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-
-    /* ESCALA GLOBAL del pixel art */
-    scale: var(--pixel-scale, 1);
-}
-
-/* Logo debajo */
-.game-logo {
-    margin-top: 20px;
-    width: 180px;
-    image-rendering: pixelated;
-}
-
-@media (max-width: 1200px) {
-    :root { --pixel-scale: 0.8; }
-}
-
-@media (max-width: 900px) {
-    :root { --pixel-scale: 0.65; }
-}
-
-@media (max-width: 600px) {
-    :root { --pixel-scale: 0.5; }
-}
-
-@media (max-width: 400px) {
-    :root { --pixel-scale: 0.4; }
-}
-
+/* -----------------------------------------------------------------
+   PANTALLA DE INICIO
+-------------------------------------------------------------------*/
 
 .start-screen {
     text-align: center;
+    animation: introArcade 0.6s ease-out;
 }
 
-.hi-score {
-    font-size: 16px;
-    margin-bottom: 20px;
+@keyframes introArcade {
+    0% { opacity: 0; transform: scale(0.8); filter: blur(2px); }
+    60% { opacity: 1; transform: scale(1.05); filter: blur(0); }
+    100% { opacity: 1; transform: scale(1); }
 }
 
-.start-button p {
-    font-size: 24px;
-    margin-bottom: 10px;
+.screen-out {
+    animation: screenOut 0.4s ease-in forwards;
 }
+
+@keyframes screenOut {
+    to { opacity: 0; transform: scale(0.9); }
+}
+
+.hi-score { font-size: 16px; margin-bottom: 20px; text-shadow: 0 0 4px #000; }
+#hi-score-value {
+    color: #ffc94d;
+    text-shadow: 0 0 6px #ffdd88, 0 0 10px #ffdd88;
+    animation: hiPulse 1s infinite alternate;
+}
+
+@keyframes hiPulse {
+    from { transform: scale(1); opacity: 0.9; }
+    to   { transform: scale(1.05); opacity: 1; }
+}
+
+.start-title { font-size: 32px; margin-bottom: 20px; }
+.ready-text { font-size: 16px; margin-bottom: 20px; }
 
 .start-button button {
     background-color: #ffcc00;
@@ -95,14 +73,13 @@ body {
     border-radius: 5px;
     margin: 5px;
 }
+.start-button button:hover { background-color: #e0b200; }
 
-.start-button button:hover {
-    background-color: #e0b200;
-}
+/* -----------------------------------------------------------------
+   PIXEL ART (sprites)
+-------------------------------------------------------------------*/
 
-.unicorn, .narwhal, .message {
-    display: none; 
-}
+.unicorn, .narwhal, .message { display: none; }
 
 .unicorn {
 	width: 6px;
@@ -114,14 +91,12 @@ body {
 .happy {
   width: 6px;
 	height: 6px;
-	margin-left: 200px;
 	background: transparent;
 	box-shadow: 114px 168px #bee10e,96px 144px #bee10e,72px 126px #bee10e,108px 114px #bee10e,54px 60px #bee10e,48px 36px #bee10e,60px 48px #bee10e,30px 42px #bee10e,36px 30px #bee10e,24px 48px #03afce,18px 54px #03afce,90px 12px #03afce,96px 30px #03afce,102px 120px #03afce,12px 132px #03afce,42px 12px #aacff3,48px 18px #aacff3,30px 12px #aacff3,12px 30px #aacff3,114px 36px #aacff3,126px 114px #aacff3,108px 156px #aacff3,90px 132px #aacff3,60px 24px #aacff3,66px 30px #aacff3,72px 42px #aacff3,84px 48px #aacff3,90px 54px #aacff3,78px 24px #03afce,84px 18px #03afce,18px 126px #03afce,24px 120px #03afce,36px 120px #03afce,36px 132px #03afce,36px 144px #03afce,54px 132px #03afce,48px 120px #03afce,6px 72px #ff2998,6px 96px #ff2998,6px 102px #ff2998,6px 90px #ff2998,6px 84px #ff2998,6px 78px #ff2998,12px 90px #ff2998,18px 90px #ff2998,18px 96px #ff2998,18px 102px #ff2998,18px 84px #ff2998,18px 78px #ff2998,18px 72px #ff2998,36px 72px #ff2998,30px 78px #ff2998,30px 84px #ff2998,30px 90px #ff2998,30px 102px #ff2998,30px 96px #ff2998,36px 90px #ff2998,42px 90px #ff2998,42px 84px #ff2998,42px 78px #ff2998,42px 96px #ff2998,42px 102px #ff2998,54px 102px #ff2998,54px 96px #ff2998,54px 90px #ff2998,54px 84px #ff2998,54px 78px #ff2998,54px 72px #ff2998,60px 72px #ff2998,66px 72px #ff2998,66px 78px #ff2998,66px 90px #ff2998,60px 90px #ff2998,66px 84px #ff2998,78px 90px #ff2998,78px 84px #ff2998,78px 78px #ff2998,78px 72px #ff2998,84px 72px #ff2998,90px 72px #ff2998,90px 78px #ff2998,90px 84px #ff2998,90px 90px #ff2998,84px 90px #ff2998,78px 102px #ff2998,78px 96px #ff2998,102px 72px #ff2998,102px 78px #ff2998,102px 84px #ff2998,102px 90px #ff2998,108px 90px #ff2998,114px 90px #ff2998,114px 84px #ff2998,114px 78px #ff2998,114px 72px #ff2998,114px 96px #ff2998,114px 102px #ff2998,108px 102px #ff2998,102px 102px #ff2998;
 }
 
 .new {
   margin-top: 4px;
-  margin-left: 350px;
 	width: 6px;
 	height: 6px;
 	background: transparent;
@@ -130,7 +105,6 @@ body {
 }
 
 .year {
-  margin-left: 460px;
   width: 6px;
 	height: 6px;
 	background: transparent;
@@ -138,59 +112,100 @@ body {
 }
 
 .narwhal {
-  margin-left:580px;
-  margin-top: -32px;
 	width: 6px;
 	height: 6px;
 	background: transparent;
 	box-shadow: 66px 120px #0c8fe7,72px 108px #0c8fe7,78px 102px #0c8fe7,78px 108px #0c8fe7,84px 120px #0c8fe7,84px 102px #0c8fe7,84px 96px #0c8fe7,96px 90px #0c8fe7,102px 90px #0c8fe7,114px 90px #0c8fe7,120px 90px #0c8fe7,126px 90px #0c8fe7,174px 108px #0c8fe7,168px 102px #0c8fe7,180px 102px #0c8fe7,90px 120px #0c8fe7,102px 114px #0c8fe7,90px 114px #0c8fe7,90px 102px #0c8fe7,90px 96px #0c8fe7,96px 108px #0c8fe7,90px 108px #0c8fe7,102px 96px #0c8fe7,96px 96px #0c8fe7,96px 102px #0c8fe7,102px 102px #0c8fe7,102px 108px #0c8fe7,108px 108px #0c8fe7,114px 114px #0c8fe7,138px 114px #0c8fe7,144px 114px #0c8fe7,138px 108px #0c8fe7,144px 108px #0c8fe7,126px 102px #0c8fe7,138px 102px #0c8fe7,132px 102px #0c8fe7,108px 114px #0c8fe7,120px 114px #0c8fe7,114px 108px #0c8fe7,114px 102px #0c8fe7,108px 90px #0c8fe7,114px 96px #0c8fe7,108px 96px #0c8fe7,108px 102px #0c8fe7,120px 102px #0c8fe7,120px 96px #0c8fe7,132px 96px #0c8fe7,126px 96px #0c8fe7,132px 114px #0c8fe7,126px 114px #0c8fe7,120px 108px #0c8fe7,132px 108px #0c8fe7,126px 108px #0c8fe7,60px 84px #d29027,54px 78px #d29027,48px 72px #d29027,84px 108px #000000,66px 108px #b1e7ff,72px 102px #b1e7ff,72px 96px #b1e7ff,78px 96px #b1e7ff,84px 90px #b1e7ff,90px 90px #b1e7ff,150px 114px #90c8eb,156px 114px #90c8eb,162px 114px #90c8eb,168px 114px #90c8eb,132px 90px #82c3eb,138px 96px #82c3eb,144px 102px #82c3eb,150px 108px #82c3eb,96px 120px #6eb5e5,102px 120px #6eb5e5,108px 120px #6eb5e5,66px 102px #b6f0ff,114px 120px #86c4eb,126px 120px #86c4eb,132px 120px #86c4eb,138px 120px #86c4eb,144px 120px #86c4eb,150px 120px #86c4eb,162px 120px #86c4eb,156px 120px #86c4eb,120px 120px #86c4eb,96px 114px #0c8fe7,84px 114px #0c8fe7,78px 120px #0c8fe7,72px 120px #0c8fe7,66px 114px #0c8fe7,78px 114px #e91e63,72px 114px #e91e63,66px 90px #d59327,108px 162px #009ede,108px 156px #009ede,108px 150px #009ede,102px 144px #009ede,96px 138px #009ede,90px 138px #009ede,66px 144px #009ede,84px 132px #009ede,78px 132px #009ede,114px 162px #009ede,114px 156px #009ede,114px 150px #009ede,120px 138px #009ede,126px 138px #009ede,132px 138px #009ede,138px 132px #009ede,132px 132px #009ede,150px 150px #009ede,144px 132px #009ede,102px 138px #009ede,96px 132px #009ede,120px 132px #009ede,114px 138px #009ede,102px 132px #3ac6f1,108px 132px #3ac6f1,114px 132px #3ac6f1,108px 138px #3ac6f1,156px 138px #6dcff3,72px 138px #6dcff3,114px 144px #009fdf,108px 144px #009fdf,120px 144px #3bc7f1,78px 150px #3bc7f1;
 }
 
-.blink {
-      animation: blink 1s steps(5, start) infinite;
-      -webkit-animation: blink 1s steps(5, start) infinite;
-    }
+.unicorn-wrapper,
+.narwhal-wrapper {
+    width: 260px;
+    height: 260px;
+    position: relative;
+}
 
-    @keyframes blink {
-      to {
-        visibility: hidden;
-      }
-    }
-    @-webkit-keyframes blink {
-      to {
-        visibility: hidden;
-      }
-    }
+/* contenedor del mensaje */
+.message-wrapper {
+    width: 600px;
+    height: 300px;
+    position: relative;
+}
 
+.message {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
 
-@-webkit-keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
-@-moz-keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
-@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+/* CONTENEDOR que alinea HAPPY – NEW – YEAR */
+.msg-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* -----------------------------------------------------------------
+   ANIMACIONES
+-------------------------------------------------------------------*/
 
 .fade-in {
- opacity:0;
- -webkit-animation:fadeIn ease-in 1;
- -moz-animation:fadeIn ease-in 1;
- animation:fadeIn ease-in 1;
- -webkit-animation-fill-mode:forwards; 
- -moz-animation-fill-mode:forwards;
- animation-fill-mode:forwards;
- -webkit-animation-duration:1s;
- -moz-animation-duration:1s;
- animation-duration:1s;
+    opacity: 0;
+    animation: fadeIn 1s ease-in forwards;
+}
+.delay-2 { animation-delay: 1s; }
+.delay-3 { animation-delay: 2s; }
+.delay-4 { animation-delay: 3s; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* -----------------------------------------------------------------
+   CONTENEDOR GENERAL
+-------------------------------------------------------------------*/
+
+:root { --pixel-scale: 1; }
+
+.animation-wrapper {
+    margin-top: -120px;   /* ajusta este valor manualmente */
 }
 
-.delay-2{
-  -webkit-animation-delay: 1s;
-  animation-delay: 1s;
+.animation-wrapper {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(var(--pixel-scale));
+    text-align: center;
 }
 
-.delay-3{
-  -webkit-animation-delay: 2s;
-  animation-delay: 2s;
+.pixel-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
 }
 
-.delay-4{
-  -webkit-animation-delay: 3s;
-  animation-delay: 3s;
+/* -----------------------------------------------------------------
+   LOGO
+-------------------------------------------------------------------*/
+
+.game-logo {
+    display: block;
+    margin: 40px auto 0 auto;
+    width: 200px;
 }
+
+/* -----------------------------------------------------------------
+   RESPONSIVE SCALE
+-------------------------------------------------------------------*/
+
+@media (max-width: 1200px) { :root { --pixel-scale: 0.85; } }
+@media (max-width: 900px)  { :root { --pixel-scale: 0.7; } }
+@media (max-width: 700px)  { :root { --pixel-scale: 0.55; } }
+@media (max-width: 480px)  { :root { --pixel-scale: 0.45; } }

@@ -14,14 +14,17 @@
 
     <!-- VIDEO DE FONDO (invisible al inicio) -->
     <video id="bg-video" class="bg-video" autoplay loop muted>
-        <source src="resources/fondo.mp4" type="video/mp4">
+        <source src="./resources/fondo.mp4" type="video/mp4">
     </video>
 
     <div class="game-screen">
 
         <!-- Pantalla de inicio -->
         <div class="start-screen">
-            <div class="hi-score">HI-SCORE: 123000</div>
+            <div class="hi-score">
+                HI-SCORE:
+                <span id="hi-score-value">000000</span>
+            </div>
 
             <div class="start-button">
                 <p class="start-title">START</p>
@@ -32,22 +35,30 @@
             </div>
         </div>
 
-        <!-- Animación Año Nuevo -->
-		<div class="animation-wrapper" id="animation-wrapper">
+        <!-- BLOQUE RESPONSIVE CON PIXEL ART + LOGO -->
+        <div class="animation-wrapper" id="animation-wrapper">
 
-			<div class="animation" id="new-year-animation">
-				<div class="unicorn"></div>
+			<div class="pixel-row">
 
-				<div class="message blink">
-					<div class="happy fade-in"></div>
-					<div class="new fade-in delay-2"></div>
-					<div class="year fade-in delay-3"></div>
+				<div class="sprite unicorn-wrapper">
+					<div class="unicorn"></div>
 				</div>
 
-				<div class="narwhal fade-in delay-4"></div>
+				<div class="message">
+					<div class="msg-row">
+						<div class="happy fade-in"></div>
+						<div class="new fade-in delay-2"></div>
+						<div class="year fade-in delay-3"></div>
+					</div>
+				</div>
+
+				<div class="sprite narwhal-wrapper">
+					<div class="narwhal fade-in delay-4"></div>
+				</div>
+
 			</div>
 
-			<!-- Logo debajo -->
+			<!-- Logo abajo, centrado -->
 			<img src="resources/logo.png" class="game-logo" alt="Logo">
 		</div>
 
