@@ -6,17 +6,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     startBtn.addEventListener('click', () => {
 
-        // Mostrar video de fondo
         bgVideo.style.display = "block";
-
-        // Ocultar pantalla de inicio
         document.querySelector('.start-screen').style.display = 'none';
 
-        // Mostrar animación centrada
-        animation.style.display = 'block';
+        // Mostrar wrapper responsive
+        document.getElementById('animation-wrapper').style.display = 'block';
 
         document.querySelector('.unicorn').style.display = 'block';
         document.querySelector('.message').style.display = 'block';
         document.querySelector('.narwhal').style.display = 'block';
     });
+
 });
