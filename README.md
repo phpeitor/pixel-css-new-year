@@ -1,11 +1,19 @@
 # Pixel Art New Year
-ElePHPant se construye íntegramente con cuadrículas de píxeles definidos en CSS, sin la necesidad de imágenes externas.
+[![forthebadge](http://forthebadge.com/images/badges/use-css.svg)](https://www.linkedin.com/in/drphp/)
+[![forthebadge](http://forthebadge.com/images/badges/built-with-love.svg)](https://www.linkedin.com/in/drphp/)
 
-- Clona este repositorio en tu máquina local utilizando el comando git clone [URL_del_repositorio].
-- Abre el archivo index.html en tu navegador web preferido.
+Para utilizar este proyecto sigue estos pasos:
 
+## 🚀 Quick Start
+
+1. **Clonar este repositorio**
+```bash
+git clone https://github.com/phpeitor/pixel-css-new-year.git
+cd pixel-css-new-year
 ```
-    .\index.html
+2. **Ejecutar comando**
+```bash
+index.html
 ```
 [![Video](https://img.youtube.com/vi/NERMWbpCRLY/0.jpg)](https://www.youtube.com/watch?v=NERMWbpCRLY)  
 [Ver demo](https://www.youtube.com/watch?v=NERMWbpCRLY)
