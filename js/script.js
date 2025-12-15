@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const animationWrapper = document.querySelector('.animation-wrapper'); 
     const hiScoreValue = document.getElementById('hi-score-value');
 
-    const targetScore = 18300;
+    const targetScore = 180315;
     const duration = 1500;
     const startTime = performance.now();
 
