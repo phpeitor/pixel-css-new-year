@@ -176,8 +176,7 @@ body {
 .pixel-row {
     display: flex;
     justify-content: center;
-    gap: 80px;    
-    position: relative;
+    gap: 50px;    
 }
 
 .unicorn-wrapper,
@@ -188,7 +187,6 @@ body {
     position: relative;
 }
 
-/* tamaños aproximados de cada sprite */
 .unicorn-wrapper,
 .narwhal-wrapper {
     display: flex;
@@ -258,12 +256,12 @@ body {
     height: 220px;
     display: flex;
     flex-direction: column;
-    justify-content: center;     /* centra vertical */
-    align-items: center;         /* centra horizontal */
+    justify-content: center;    
+    align-items: center;        
 }
 
 .message-flex > div {
-    position: relative !important;  /* rompe el posicionamiento previo */
+    position: relative !important;  
     left: 0 !important;
     top: 0 !important;
     transform: none !important;
@@ -275,16 +273,13 @@ body {
     height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: center;  /* <--- CENTRA VERTICAL EL TEXTO */
-    align-items: center;      /* <--- CENTRA HORIZONTAL EL TEXTO */
-    gap: 10px;
+    justify-content: center;  
+    align-items: center;     
 }
 
-/* Quitamos las posiciones absolutas del pixel-art del texto */
 .message-group > div {
     position: static !important;
     transform: none !important;
-    margin: 0 !important;
 }
 
 .word {
@@ -295,21 +290,21 @@ body {
 
 .happy {
     position: absolute;
-    top: -120px;     /* CORRIGE la bajada del pixel-art */
+    top: -120px;    
     left: 50%;
     transform: translateX(-50%);
 }
 
 .new {
     position: absolute;
-    top: -40px;      /* NEW empieza arriba, leve corrección */
+    top: -40px;     
     left: 50%;
     transform: translateX(-50%);
 }
 
 .year {
     position: absolute;
-    top: -60px;      /* YEAR un poco más alto */
+    top: -60px;    
     left: 50%;
     transform: translateX(-50%);
 }
@@ -333,23 +328,59 @@ body {
 
 @media (max-width: 700px) {
     :root { --pixel-scale: 0.6; }
+    .pixel-row {
+        gap: 24px;
+    }
+    .unicorn-wrapper,
+    .narwhal-wrapper,
+    .message-wrapper {
+        transform: none;
+    }
+
+    .message-wrapper {
+        gap: 12px;
+    }
+
+    .word {
+        width: 140px;
+        height: 140px;
+    }
+
+    .happy,
+    .new,
+    .year {
+        position: relative;
+        top: 0;
+        left: 0;
+        transform: none;
+        margin: 0 auto;
+    }
+
+    .animation-wrapper {
+        top: 50%;
+        padding: 24px 0;
+        left: 26%;
+    }
 }
 
 @media (max-width: 480px) {
     :root { --pixel-scale: 0.5; }
 }
 
-.animation-wrapper {
-    top: 52%;   /* antes 50% */
-}
+@media (min-width: 701px) {
+  .pixel-row {
+    gap: 32px; 
+  }
+  .unicorn-wrapper,
+  .narwhal-wrapper {
+    transform: translateY(-18px);
+  }
 
-/* sube unicornio y narwhal dentro del cuadro azul */
-.unicorn-wrapper,
-.narwhal-wrapper {
-    transform: translateY(-18px);   /* prueba  -18; puedes jugar -15, -20… */
-}
-
-/* baja el texto HAPPY NEW YEAR */
-.message-wrapper {
+  .message-wrapper {
     transform: translateY(16px);
+  }
+
+  .happy { top: -120px; }
+  .new   { top: -40px; }
+  .year  { top: -60px; }
 }
