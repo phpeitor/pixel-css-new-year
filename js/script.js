@@ -1,38 +1,103 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const startBtn = document.getElementById('start-btn');
-    const bgVideo = document.getElementById('bg-video');
-    const animationWrapper = document.querySelector('.animation-wrapper'); 
-    const hiScoreValue = document.getElementById('hi-score-value');
+document.addEventListener('DOMContentLoaded', () => {
+    const animalList = document.getElementById('animal-list');
+    const animalCount = document.getElementById('animal-count');
+    const catalogError = document.getElementById('catalog-error');
+    const emptyState = document.getElementById('empty-state');
+    const loader = document.getElementById('loader');
+    const pixelResult = document.getElementById('pixel-result');
+    const pixelArt = document.getElementById('pixel-art');
+    const matrixSize = document.getElementById('matrix-size');
+    const resultName = document.getElementById('result-name');
+    let generationVersion = 0;
 
-    const targetScore = 180315;
-    const duration = 1500;
-    const startTime = performance.now();
+    async function requestJson(url) {
+        const response = await fetch(url, {
+            headers: { Accept: 'application/json' },
+        });
+        const data = await response.json().catch(() => null);
 
-    function animateScore(now) {
-        const elapsed = now - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        const current = Math.floor(progress * targetScore);
-        hiScoreValue.textContent = current.toString().padStart(6, "0");
-        if (progress < 1) requestAnimationFrame(animateScore);
+        if (!response.ok || !data) {
+            throw new Error(data?.error || 'No se pudo conectar con el generador.');
+        }
+
+        return data;
     }
-    requestAnimationFrame(animateScore);
 
-    startBtn.addEventListener('click', () => {
+    function showError(message) {
+        catalogError.textContent = message;
+        catalogError.hidden = false;
+    }
 
-        bgVideo.style.display = "block";
+    function createAnimalButton(animal) {
+        const button = document.createElement('button');
+        button.className = 'animal-button';
+        button.type = 'button';
+        button.dataset.animal = animal.id;
+        button.setAttribute('aria-pressed', 'false');
+        button.innerHTML = `
+            <span class="animal-emoji" aria-hidden="true">${animal.emoji}</span>
+            <span class="animal-name">${animal.name}</span>
+        `;
+        button.addEventListener('click', () => generateAnimal(animal.id, button));
+        return button;
+    }
 
-        const startScreen = document.querySelector('.start-screen');
-        startScreen.classList.add('screen-out');
+    async function loadCatalog() {
+        try {
+            const data = await requestJson('./generate.php');
+            const fragment = document.createDocumentFragment();
 
-        setTimeout(() => {
-            startScreen.style.display = 'none';
-            animationWrapper.style.display = 'flex';
-            document.querySelector('.unicorn').style.display = 'block';
-            document.querySelector('.happy').style.display = 'block';
-            document.querySelector('.new').style.display = 'block';
-            document.querySelector('.year').style.display = 'block';
-            document.querySelector('.narwhal').style.display = 'block';
+            data.animals.forEach((animal) => fragment.appendChild(createAnimalButton(animal)));
+            animalList.replaceChildren(fragment);
+            animalCount.textContent = `${data.animals.length} criaturas`;
+            animalList.setAttribute('aria-busy', 'false');
+        } catch (error) {
+            animalList.setAttribute('aria-busy', 'false');
+            showError(error.message);
+        }
+    }
 
-        }, 400);
-    });
+    async function generateAnimal(animalId, selectedButton) {
+        const requestVersion = ++generationVersion;
+
+        document.querySelectorAll('.animal-button').forEach((button) => {
+            button.setAttribute('aria-pressed', String(button === selectedButton));
+        });
+
+        catalogError.hidden = true;
+        emptyState.hidden = true;
+        pixelResult.hidden = true;
+        loader.hidden = false;
+
+        try {
+            const data = await requestJson(`./generate.php?animal=${encodeURIComponent(animalId)}`);
+
+            if (requestVersion !== generationVersion) {
+                return;
+            }
+
+            pixelArt.style.setProperty('--pixel-size', `${data.pixelSize}px`);
+            pixelArt.style.setProperty('--pixel-shadows', data.boxShadow);
+            pixelResult.style.width = `${data.width * data.pixelSize}px`;
+            pixelResult.style.height = `${data.height * data.pixelSize}px`;
+            pixelArt.setAttribute('role', 'img');
+            pixelArt.setAttribute('aria-label', `Pixel Art de ${data.name}`);
+            matrixSize.textContent = `MATRIZ ${data.width} x ${data.height}`;
+            resultName.textContent = `${data.emoji} ${data.name.toUpperCase()}`;
+            pixelResult.hidden = false;
+        } catch (error) {
+            if (requestVersion !== generationVersion) {
+                return;
+            }
+
+            emptyState.hidden = false;
+            showError(error.message);
+        } finally {
+            if (requestVersion === generationVersion) {
+                loader.hidden = true;
+            }
+        }
+    }
+
+    loadCatalog();
 });

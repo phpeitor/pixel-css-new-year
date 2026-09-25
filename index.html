@@ -1,64 +1,79 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='75'>👾</text></svg>" />
-    <title>Pixel Art New Year</title>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <meta name="description" content="Genera animales Pixel Art con matrices y CSS box-shadow.">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='75'>👾</text></svg>">
+    <title>Pixel Fauna - Generador CSS Pixel Art</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
-    <video id="bg-video" class="bg-video" autoplay loop muted>
-        <source src="./resources/fondo.mp4" type="video/mp4">
-    </video>
+    <header class="site-header">
+        <a class="brand" href="./" aria-label="Pixel Fauna, inicio">
+            <span class="brand-mark" aria-hidden="true">PF</span>
+            <span>PIXEL FAUNA</span>
+        </a>
+        <span class="status-chip"><span aria-hidden="true"></span>MVP ONLINE</span>
+    </header>
 
-    <div class="game-screen">
-        <div class="start-screen">
-            <div class="hi-score">
-                HI-SCORE:
-                <span id="hi-score-value">000000</span>
+    <main class="app-shell">
+        <section class="intro" aria-labelledby="page-title">
+            <p class="eyebrow">GENERADOR CSS // 001</p>
+            <h1 id="page-title">Elige una criatura.<br><strong>Hazla píxel.</strong></h1>
+            <p class="intro-copy">Selecciona un emoji y convertiremos su matriz en una ilustración construida con CSS puro.</p>
+        </section>
+
+        <section class="generator" aria-label="Generador de animales Pixel Art">
+            <div class="selector-panel">
+                <div class="panel-heading">
+                    <div>
+                        <span class="step">PASO 01</span>
+                        <h2>Selecciona un animal</h2>
+                    </div>
+                    <span id="animal-count" class="animal-count" aria-live="polite">-- criaturas</span>
+                </div>
+
+                <div id="animal-list" class="animal-list" role="list" aria-busy="true"></div>
+
+                <p id="catalog-error" class="error-message" role="alert" hidden></p>
             </div>
 
-            <div class="start-button">
-                <p class="start-title">START</p>
-                <p class="ready-text">ARE YOU READY?</p>
+            <div class="preview-panel">
+                <div class="preview-topbar">
+                    <span>PREVISUALIZACIÓN</span>
+                    <span id="matrix-size">MATRIZ -- x --</span>
+                </div>
 
-                <button id="start-btn">YES</button>
-                <button id="no-btn">NO</button>
+                <div id="pixel-stage" class="pixel-stage" aria-live="polite">
+                    <div id="empty-state" class="empty-state">
+                        <span class="empty-icon" aria-hidden="true">?</span>
+                        <p>Elige una criatura<br>para comenzar</p>
+                    </div>
+                    <div id="loader" class="loader" hidden aria-label="Generando Pixel Art"></div>
+                    <div id="pixel-result" class="pixel-result" hidden>
+                        <div id="pixel-art" class="pixel-art"></div>
+                    </div>
+                </div>
+
+                <div class="preview-footer">
+                    <div>
+                        <span class="result-label">CRIATURA GENERADA</span>
+                        <strong id="result-name">SIN SELECCIÓN</strong>
+                    </div>
+                    <div class="css-badge"><span aria-hidden="true">◆</span> CSS BOX-SHADOW</div>
+                </div>
             </div>
-        </div>
+        </section>
+    </main>
 
-        <div class="animation-wrapper" id="animation">
-			<div class="pixel-row">
-				<div class="unicorn-wrapper">
-					<div class="unicorn"></div>
-				</div>
-
-				<div class="message-wrapper blink">
-					<div class="word">
-						<div class="happy fade-in"></div>
-					</div>
-
-					<div class="word">
-						<div class="new fade-in delay-2"></div>
-					</div>
-
-					<div class="word">
-						<div class="year fade-in delay-3"></div>
-					</div>
-				</div>
-
-				<div class="narwhal-wrapper">
-					<div class="narwhal fade-in delay-4"></div>
-				</div>
-			</div>
-		</div>
-
-		<div class="footer-logo">
-			<img src="resources/logo.png" class="game-logo" alt="Logo">
-		</div>
-    </div>
+    <footer class="site-footer">
+        <span>HECHO CON HTML + CSS + PHP</span>
+        <span>NO IMÁGENES. SOLO PÍXELES.</span>
+    </footer>
 
     <script src="./js/script.js"></script>
 </body>

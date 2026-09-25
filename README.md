@@ -1,19 +1,38 @@
-# Pixel Art New Year 👾🥂⋆
-[![forthebadge](http://forthebadge.com/images/badges/uses-css.svg)](https://www.linkedin.com/in/drphp/)
-[![forthebadge](http://forthebadge.com/images/badges/built-with-love.svg)](https://www.linkedin.com/in/drphp/)
+# Pixel Fauna
 
-Para utilizar este proyecto sigue estos pasos:
+MVP de generación de animales Pixel Art con matrices PHP y CSS `box-shadow`.
 
-## 🚀 Quick Start
+## Funcionamiento
 
-1. **Clonar este repositorio**
-```bash
-git clone https://github.com/phpeitor/pixel-css-new-year.git
-cd pixel-css-new-year
+1. El navegador solicita a `generate.php` el catálogo de animales.
+2. El usuario selecciona un animal desde la lista de emojis.
+3. PHP carga su matriz desde `patterns.php`.
+4. Cada celda visible se convierte en una sombra CSS.
+5. El navegador renderiza el resultado sin imágenes ni `canvas`.
+
+## Requisitos
+
+- PHP 8.0 o superior.
+- Un servidor web como Apache.
+
+## Uso local
+
+Sirve el directorio desde Apache y abre la URL correspondiente, por ejemplo:
+
+```text
+http://localhost/pixel-css-new-year/
 ```
-2. **Ejecutar comando**
-```bash
-index.html
-```
-[![Video](https://img.youtube.com/vi/NERMWbpCRLY/0.jpg)](https://www.youtube.com/watch?v=NERMWbpCRLY)  
-[Ver demo](https://www.youtube.com/watch?v=NERMWbpCRLY)
+
+No abras `index.html` directamente mediante `file://`, ya que el frontend necesita consultar el endpoint PHP.
+
+## Estructura
+
+- `index.html`: interfaz del generador.
+- `css/style.css`: diseño responsive y renderizado del píxel base.
+- `js/script.js`: catálogo, selección y actualización de la previsualización.
+- `generate.php`: endpoint que valida la selección y genera `box-shadow`.
+- `patterns.php`: catálogo de matrices y paletas.
+
+## Añadir un animal
+
+Añade una entrada a `patterns.php` con un identificador, nombre, emoji, paleta y matriz rectangular. Usa `.` para las celdas transparentes y asegúrate de declarar en la paleta todos los demás símbolos.
