@@ -57,7 +57,13 @@
                         <span class="empty-icon" aria-hidden="true">?</span>
                         <p>Elige una criatura<br>para comenzar</p>
                     </div>
-                    <div id="loader" class="loader" hidden aria-label="Generando Pixel Art"></div>
+                    <div id="loader" class="loader" hidden aria-label="Generando Pixel Art">
+                        <div class="loader-square"></div>
+                        <div class="loader-pixels" aria-hidden="true">
+                            <span></span><span></span><span></span><span></span>
+                        </div>
+                        <span>GENERANDO PÍXELES…</span>
+                    </div>
                     <div id="pixel-result" class="pixel-result" hidden>
                         <div id="pixel-art" class="pixel-art"></div>
                     </div>
@@ -68,8 +74,14 @@
                         <span class="result-label">CRIATURA GENERADA</span>
                         <strong id="result-name">SIN SELECCIÓN</strong>
                     </div>
-                    <div class="css-badge"><span aria-hidden="true">◆</span> CSS BOX-SHADOW</div>
+                    <div class="footer-actions">
+                        <div class="css-badge"><span aria-hidden="true">◆</span> BOX-SHADOW</div>
+                        <button id="copy-btn" class="copy-btn" type="button" disabled>
+                            <span class="copy-label">COPIAR CSS</span>
+                        </button>
+                    </div>
                 </div>
+                <p id="copy-feedback" class="copy-feedback" role="status" aria-live="polite" hidden></p>
             </div>
         </section>
     </main>

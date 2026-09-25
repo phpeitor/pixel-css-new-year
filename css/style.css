@@ -359,15 +359,45 @@ h2 {
 }
 
 .loader {
-    width: 20px;
-    height: 20px;
+    display: grid;
+    gap: 14px;
+    justify-items: center;
+    font-family: "Press Start 2P", monospace;
+    font-size: 9px;
+    color: var(--ink);
+}
+
+.loader-square {
+    width: 22px;
+    height: 22px;
     background: var(--ink);
-    box-shadow: 30px 0 var(--coral), -30px 0 var(--acid);
+    box-shadow: 34px 0 var(--coral), -34px 0 var(--acid);
     animation: loading 600ms steps(2, end) infinite;
 }
 
+.loader-pixels {
+    display: flex;
+    gap: 6px;
+}
+
+.loader-pixels span {
+    width: 9px;
+    height: 9px;
+    background: var(--ink);
+    animation: pixel-build 900ms steps(1, end) infinite;
+}
+
+.loader-pixels span:nth-child(2) { animation-delay: 150ms; }
+.loader-pixels span:nth-child(3) { animation-delay: 300ms; }
+.loader-pixels span:nth-child(4) { animation-delay: 450ms; }
+
 @keyframes loading {
     50% { transform: rotate(90deg); }
+}
+
+@keyframes pixel-build {
+    0%, 100% { background: var(--ink); transform: translateY(0); }
+    50% { background: var(--coral); transform: translateY(-6px); }
 }
 
 .preview-footer {
@@ -378,6 +408,14 @@ h2 {
 .preview-footer > div:first-child {
     display: grid;
     gap: 7px;
+}
+
+.footer-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
 }
 
 #result-name {
@@ -396,6 +434,54 @@ h2 {
     background: var(--coral);
     font-size: 9px;
     white-space: nowrap;
+}
+
+.copy-btn {
+    padding: 9px 12px;
+    border: 2px solid var(--ink);
+    background: var(--acid);
+    color: var(--ink);
+    font-family: "Press Start 2P", monospace;
+    font-size: 9px;
+    cursor: pointer;
+    box-shadow: 3px 3px 0 var(--ink);
+    transition: transform 100ms ease, box-shadow 100ms ease, background 100ms ease;
+}
+
+.copy-btn:hover:not(:disabled) {
+    background: #c9f12c;
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0 var(--ink);
+}
+
+.copy-btn:active:not(:disabled) {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 var(--ink);
+}
+
+.copy-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.copy-btn:focus-visible {
+    outline: 4px solid var(--blue);
+    outline-offset: 3px;
+}
+
+.copy-feedback {
+    margin: 0;
+    padding: 10px 20px;
+    border-top: var(--border);
+    background: var(--acid);
+    font-family: "Press Start 2P", monospace;
+    font-size: 9px;
+    text-align: right;
+}
+
+.copy-feedback.is-error {
+    background: #ffd0c9;
 }
 
 .site-footer {
