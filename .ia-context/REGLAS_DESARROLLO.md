@@ -27,10 +27,12 @@ Usuario
 - `index.html`: interfaz existente y punto de entrada del navegador.
 - `css/style.css`: estilos y figuras Pixel Art existentes.
 - `js/script.js`: comportamiento de la interfaz actual.
+- `backend/generate.php`: endpoint que convierte matrices en CSS `box-shadow`.
+- `backend/patterns.php`: catálogo de animales, matrices y paletas.
 - `resources/`: recursos visuales y multimedia.
 - `.ia-context/`: alcance, estándares y reglas para asistentes y colaboradores.
 
-La estructura PHP y el catálogo de matrices todavía deben incorporarse. No tratarlos como existentes hasta comprobarlos en el repositorio.
+El backend PHP no utiliza framework ni dependencias de Composer. No añadir paquetes hasta que exista una necesidad concreta.
 
 ## Reglas obligatorias
 

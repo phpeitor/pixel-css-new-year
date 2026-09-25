@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadCatalog() {
         try {
-            const data = await requestJson('./generate.php');
+            const data = await requestJson('./backend/generate.php');
             const fragment = document.createDocumentFragment();
 
             data.animals.forEach((animal) => fragment.appendChild(createAnimalButton(animal)));
@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loader.hidden = false;
 
         try {
-            const data = await requestJson(`./generate.php?animal=${encodeURIComponent(animalId)}`);
+            const data = await requestJson(`./backend/generate.php?animal=${encodeURIComponent(animalId)}`);
 
             if (requestVersion !== generationVersion) {
                 return;

@@ -34,5 +34,6 @@ El backend PHP del MVP debe resolver una solicitud de animal y opciones permitid
 
 - Mantener la lógica de patrones independiente del controlador o endpoint HTTP.
 - Mantener una única representación canónica para cada patrón.
-- No añadir base de datos, framework PHP o sistema de caché hasta que exista una necesidad concreta del MVP.
+- Mantener el endpoint en `backend/generate.php` y el catálogo en `backend/patterns.php`.
+- No añadir base de datos, framework PHP, paquetes de Composer o sistema de caché hasta que exista una necesidad concreta del MVP.
 - Documentar el contrato de cualquier endpoint cuando sea incorporado.

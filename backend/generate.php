@@ -34,7 +34,7 @@ $matrix = $pattern['matrix'];
 $palette = $pattern['palette'];
 $height = count($matrix);
 $width = strlen($matrix[0]);
-$pixelSize = 12;
+$pixelSize = $pattern['pixelSize'] ?? 12;
 $shadows = [];
 
 foreach ($matrix as $rowIndex => $row) {
