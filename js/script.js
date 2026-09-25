@@ -51,6 +51,11 @@ document.addEventListener('DOMContentLoaded', () => {
             animalList.replaceChildren(fragment);
             animalCount.textContent = `${data.animals.length} criaturas`;
             animalList.setAttribute('aria-busy', 'false');
+
+            const requestedAnimal = new URLSearchParams(window.location.search).get('animal');
+            const initialButton = Array.from(animalList.querySelectorAll('.animal-button'))
+                .find((button) => button.dataset.animal === requestedAnimal);
+            initialButton?.click();
         } catch (error) {
             animalList.setAttribute('aria-busy', 'false');
             showError(error.message);
