@@ -44,6 +44,8 @@ La app procesa imágenes mediante un servicio local, sin enviar archivos a un pr
 
 En el primer inicio se descargan los pesos del modelo `u2netp`; quedan en la caché local para los siguientes usos. El servicio solo escucha en `127.0.0.1:8765`. Si no está disponible, la app usa el borrado rápido de fondo blanco cuando la opción de respaldo está activa.
 
+En los controles de imagen se puede activar **Vista normal, sin efecto pixel** para inspeccionar el PNG recortado antes de pixelarlo. En ese modo se desactiva la copia de CSS hasta volver a la vista pixelada.
+
 Para cambiar el modelo, define `REMBG_MODEL` antes de ejecutar `run.ps1`. `u2netp` es la opción ligera usada por defecto; modelos más pesados pueden mejorar los bordes a cambio de espacio y tiempo.
 
 Contrato del proxy PHP: `POST backend/remove-background.php` con un campo multipart `image` (PNG/JPG/GIF/WebP, hasta 10 MB). Responde con `image/png` transparente; los errores se devuelven como JSON con un estado HTTP adecuado. El servicio Python interno ofrece `GET /health` y `POST /remove-background` en loopback.

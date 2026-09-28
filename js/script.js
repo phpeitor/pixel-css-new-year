@@ -10,6 +10,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultName = document.getElementById('result-name');
     const copyBtn = document.getElementById('copy-btn');
     const copyFeedback = document.getElementById('copy-feedback');
+    const normalImageResult = document.getElementById('normal-image-result');
+    const normalImagePreview = document.getElementById('normal-image-preview');
+    const cssBadge = document.querySelector('.css-badge');
+    const resultLabel = document.querySelector('.result-label');
     const imageInput = document.getElementById('image-input');
     const imageDropzone = document.getElementById('image-dropzone');
     const imageFeedback = document.getElementById('image-feedback');
@@ -24,6 +28,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let generationVersion = 0;
     let currentAnimal = null;
     let selectedImage = null;
+    let processedImageSource = null;
+    let processedSourceIsCutout = false;
+    let processedSourceWarning = '';
+    let processedImageUrl = null;
+    let sourceImageDimensions = null;
 
     async function requestJson(url) {
         const response = await fetch(url, {
@@ -151,6 +160,12 @@ document.addEventListener('DOMContentLoaded', () => {
     async function generateAnimal(animalId, selectedButton) {
         const requestVersion = ++generationVersion;
         selectedImage = null;
+        normalImagePreview.checked = false;
+        releaseProcessedImage();
+        processedImageSource = null;
+        processedSourceIsCutout = false;
+        processedSourceWarning = '';
+        renderImageMode();
 
         document.querySelectorAll('.animal-button').forEach((button) => {
             button.setAttribute('aria-pressed', String(button === selectedButton));
@@ -182,6 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
             matrixSize.textContent = `MATRIZ ${data.width} x ${data.height}`;
             resultName.textContent = `${data.emoji} ${data.name.toUpperCase()}`;
             currentAnimal = data;
+            renderImageMode();
             pixelResult.hidden = false;
             copyBtn.disabled = false;
         } catch (error) {
@@ -206,6 +222,54 @@ document.addEventListener('DOMContentLoaded', () => {
         const stage = document.getElementById('pixel-stage');
         const scale = Math.min(1, (stage.clientWidth - 36) / width, (stage.clientHeight - 36) / height);
         pixelResult.style.setProperty('--result-scale', String(Math.max(0.2, scale)));
+    }
+
+    function releaseProcessedImage() {
+        if (processedImageUrl) URL.revokeObjectURL(processedImageUrl);
+        processedImageUrl = null;
+        sourceImageDimensions = null;
+        normalImageResult.removeAttribute('src');
+    }
+
+    function renderImageMode() {
+        const isImage = currentAnimal?.id === 'imagen';
+        const showNormalImage = isImage && normalImagePreview.checked && processedImageUrl;
+        normalImageResult.hidden = !showNormalImage;
+        pixelArt.hidden = Boolean(showNormalImage);
+        resolutionInput.disabled = Boolean(showNormalImage);
+        paletteInput.disabled = Boolean(showNormalImage);
+        copyBtn.disabled = Boolean(showNormalImage) || !currentAnimal;
+        cssBadge.textContent = showNormalImage ? '◆ PNG TRANSPARENTE' : '◆ BOX-SHADOW';
+        copyBtn.title = showNormalImage ? 'Cambia a la vista pixelada para copiar su CSS.' : '';
+        resultLabel.textContent = showNormalImage
+            ? (processedSourceIsCutout ? 'FONDO ELIMINADO · VISTA ORIGINAL' : 'IMAGEN ORIGINAL · VISTA NORMAL')
+            : (isImage ? 'IMAGEN PIXELADA' : 'CRIATURA GENERADA');
+
+        if (showNormalImage) {
+            const { width, height } = sourceImageDimensions;
+            const stage = document.getElementById('pixel-stage');
+            const scale = Math.min(1, (stage.clientWidth - 36) / width, (stage.clientHeight - 36) / height);
+            const displayWidth = Math.max(1, Math.round(width * scale));
+            const displayHeight = Math.max(1, Math.round(height * scale));
+            if (normalImageResult.getAttribute('src') !== processedImageUrl) {
+                normalImageResult.src = processedImageUrl;
+            }
+            normalImageResult.alt = processedSourceIsCutout
+                ? `${currentAnimal.name}, fondo eliminado, vista sin pixelar`
+                : `${currentAnimal.name}, vista original sin pixelar`;
+            normalImageResult.style.width = `${displayWidth}px`;
+            normalImageResult.style.height = `${displayHeight}px`;
+            pixelResult.style.width = `${displayWidth}px`;
+            pixelResult.style.height = `${displayHeight}px`;
+            pixelResult.style.setProperty('--result-scale', '1');
+            matrixSize.textContent = `IMAGEN ${width} x ${height}`;
+        } else if (isImage) {
+            normalImageResult.alt = '';
+            pixelResult.style.width = `${currentAnimal.width * currentAnimal.pixelSize}px`;
+            pixelResult.style.height = `${currentAnimal.height * currentAnimal.pixelSize}px`;
+            fitPreview(currentAnimal.width * currentAnimal.pixelSize, currentAnimal.height * currentAnimal.pixelSize);
+            matrixSize.textContent = `MATRIZ ${currentAnimal.width} x ${currentAnimal.height}`;
+        }
     }
 
     function showImageFeedback(message, isError = false) {
@@ -373,7 +437,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return `#${[red, green, blue].map((value) => value.toString(16).padStart(2, '0')).join('')}`;
     }
 
-    async function generateFromImage(file) {
+    async function generateFromImage(file, reusableSource = null) {
         if (!file) return;
         if (!file.type.startsWith('image/')) {
             showImageFeedback('Selecciona un archivo de imagen válido.', true);
@@ -385,6 +449,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const requestVersion = ++generationVersion;
+        selectedImage = file;
+        releaseProcessedImage();
+        if (reusableSource === null) {
+            processedImageSource = null;
+            processedSourceIsCutout = false;
+            processedSourceWarning = '';
+        }
         document.querySelectorAll('.animal-button').forEach((button) => button.setAttribute('aria-pressed', 'false'));
         catalogError.hidden = true;
         imageFeedback.hidden = true;
@@ -393,12 +464,14 @@ document.addEventListener('DOMContentLoaded', () => {
         copyBtn.disabled = true;
         loader.hidden = false;
 
-        let backgroundWarning = '';
+        let backgroundWarning = reusableSource === null ? '' : processedSourceWarning;
+        let backgroundRemovedByAi = reusableSource !== null && processedSourceIsCutout;
         try {
-            let imageSource = file;
-            if (removeBackgroundWithAi.checked) {
+            let imageSource = reusableSource || file;
+            if (reusableSource === null && removeBackgroundWithAi.checked) {
                 try {
                     imageSource = await requestBackgroundRemoval(file);
+                    backgroundRemovedByAi = true;
                 } catch (error) {
                     if (!removeWhiteBackground.checked) throw error;
                     backgroundWarning = ' La IA no está disponible; se usó el borrado rápido de blanco.';
@@ -406,7 +479,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (requestVersion !== generationVersion) return;
+            processedImageSource = imageSource;
+            processedSourceIsCutout = backgroundRemovedByAi;
+            processedSourceWarning = backgroundWarning;
             const image = await getImageBitmap(imageSource);
+            const sourceWidth = image.width;
+            const sourceHeight = image.height;
             const longestSide = Number(resolutionInput.value);
             const scale = longestSide / Math.max(image.width, image.height);
             const width = Math.max(1, Math.round(image.width * scale));
@@ -421,9 +499,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (typeof image.close === 'function') image.close();
 
             const imageData = context.getImageData(0, 0, width, height);
-            if (!removeBackgroundWithAi.checked || backgroundWarning) {
-                if (removeWhiteBackground.checked) clearEdgeWhite(imageData);
-            }
+            if (!backgroundRemovedByAi && removeWhiteBackground.checked) clearEdgeWhite(imageData);
             const pixels = imageData.data;
             intensifyNeutralShadows(pixels);
             const palette = medianCutPalette(pixels, Number(paletteInput.value));
@@ -473,9 +549,11 @@ document.addEventListener('DOMContentLoaded', () => {
             resultName.textContent = `${data.emoji} ${imageName.toUpperCase()}`;
             currentAnimal = data;
             selectedImage = file;
+            processedImageUrl = URL.createObjectURL(imageSource);
+            sourceImageDimensions = { width: sourceWidth, height: sourceHeight };
             pixelResult.hidden = false;
-            copyBtn.disabled = false;
-            const backgroundStatus = removeBackgroundWithAi.checked && !backgroundWarning
+            renderImageMode();
+            const backgroundStatus = backgroundRemovedByAi
                 ? ' Fondo eliminado con IA.'
                 : '';
             showImageFeedback(`Imagen convertida: ${width} × ${height} píxeles · hasta ${palette.length} colores.${backgroundStatus}${backgroundWarning}`);
@@ -499,15 +577,16 @@ document.addEventListener('DOMContentLoaded', () => {
         input.addEventListener('input', () => {
             resolutionValue.value = `${resolutionInput.value} px`;
             paletteValue.value = paletteInput.value;
-            if (selectedImage) generateFromImage(selectedImage);
+            if (selectedImage) generateFromImage(selectedImage, processedImageSource);
         });
     });
     removeWhiteBackground.addEventListener('change', () => {
-        if (selectedImage) generateFromImage(selectedImage);
+        if (selectedImage) generateFromImage(selectedImage, processedImageSource);
     });
     removeBackgroundWithAi.addEventListener('change', () => {
         if (selectedImage) generateFromImage(selectedImage);
     });
+    normalImagePreview.addEventListener('change', renderImageMode);
 
     ['dragenter', 'dragover'].forEach((eventName) => {
         imageDropzone.addEventListener(eventName, (event) => {
@@ -526,7 +605,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     window.addEventListener('resize', () => {
-        if (currentAnimal) {
+        if (currentAnimal?.id === 'imagen') {
+            renderImageMode();
+        } else if (currentAnimal) {
             fitPreview(currentAnimal.width * currentAnimal.pixelSize, currentAnimal.height * currentAnimal.pixelSize);
         }
     });
