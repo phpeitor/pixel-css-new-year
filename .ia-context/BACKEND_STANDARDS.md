@@ -2,7 +2,7 @@
 
 ## Objetivo
 
-El backend PHP del MVP debe resolver una solicitud de animal y opciones permitidas, obtener su patrón Pixel Art y convertirlo en CSS renderizable. No utilizará IA, visión artificial ni procesamiento de imágenes.
+El backend PHP resuelve patrones de animales y convierte matrices a CSS. Para imágenes, valida las cargas y delega la eliminación de fondo a un servicio Python local persistente; PHP no ejecuta inferencia de IA.
 
 ## Flujo
 
@@ -12,6 +12,13 @@ El backend PHP del MVP debe resolver una solicitud de animal y opciones permitid
 4. Cargar la matriz y su paleta de colores.
 5. Convertir las celdas visibles en declaraciones `box-shadow`.
 6. Entregar el resultado necesario para renderizar la figura en el navegador.
+
+Para imágenes:
+
+1. Validar método, tamaño, tipo MIME y error de carga en `backend/remove-background.php`.
+2. Enviar los bytes al servicio enlazado únicamente a `127.0.0.1`.
+3. Devolver PNG con transparencia; nunca exponer trazas o rutas internas.
+4. Mantener el modelo cargado en memoria en el proceso Python; no iniciar Python por cada solicitud PHP.
 
 ## Generación CSS
 
@@ -37,3 +44,4 @@ El backend PHP del MVP debe resolver una solicitud de animal y opciones permitid
 - Mantener el endpoint en `backend/generate.php` y el catálogo en `backend/patterns.php`.
 - No añadir base de datos, framework PHP, paquetes de Composer o sistema de caché hasta que exista una necesidad concreta del MVP.
 - Documentar el contrato de cualquier endpoint cuando sea incorporado.
+- Limitar el servicio de visión a loopback; no exponerlo a la red ni permitir URLs arbitrarias de entrada.

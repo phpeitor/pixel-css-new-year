@@ -43,9 +43,13 @@
                         <span><strong>Seleccionar imagen</strong><small>PNG, JPG, GIF o WebP · máx. 10 MB</small></span>
                     </label>
                     <div class="image-settings">
+                        <label class="background-toggle" for="remove-bg-ai">
+                            <input id="remove-bg-ai" type="checkbox" checked>
+                            <span>Quitar fondo con IA</span>
+                        </label>
                         <label class="background-toggle" for="remove-white-background">
                             <input id="remove-white-background" type="checkbox" checked>
-                            <span>Quitar fondo blanco</span>
+                            <span>Usar fondo blanco si la IA no está disponible</span>
                         </label>
                         <label for="pixel-resolution">Resolución <output id="resolution-value">32 px</output></label>
                         <input id="pixel-resolution" type="range" min="16" max="48" step="4" value="32">

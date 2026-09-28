@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const resolutionValue = document.getElementById('resolution-value');
     const paletteInput = document.getElementById('palette-size');
     const paletteValue = document.getElementById('palette-value');
+    const removeBackgroundWithAi = document.getElementById('remove-bg-ai');
     const removeWhiteBackground = document.getElementById('remove-white-background');
     const HIDDEN_ANIMALS = new Set(['perro', 'gato', 'zorro', 'panda', 'ballena', 'tigre']);
     const GENERATION_DELAY = 700;
@@ -351,6 +352,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    async function requestBackgroundRemoval(file) {
+        const formData = new FormData();
+        formData.append('image', file);
+        const response = await fetch('./backend/remove-background.php', {
+            method: 'POST',
+            body: formData,
+            headers: { Accept: 'image/png, application/json' },
+        });
+
+        if (!response.ok) {
+            const error = await response.json().catch(() => null);
+            throw new Error(error?.error || 'El servicio de eliminación de fondo no está disponible.');
+        }
+
+        return response.blob();
+    }
+
     function colorToHex([red, green, blue]) {
         return `#${[red, green, blue].map((value) => value.toString(16).padStart(2, '0')).join('')}`;
     }
@@ -375,8 +393,20 @@ document.addEventListener('DOMContentLoaded', () => {
         copyBtn.disabled = true;
         loader.hidden = false;
 
+        let backgroundWarning = '';
         try {
-            const image = await getImageBitmap(file);
+            let imageSource = file;
+            if (removeBackgroundWithAi.checked) {
+                try {
+                    imageSource = await requestBackgroundRemoval(file);
+                } catch (error) {
+                    if (!removeWhiteBackground.checked) throw error;
+                    backgroundWarning = ' La IA no está disponible; se usó el borrado rápido de blanco.';
+                }
+            }
+
+            if (requestVersion !== generationVersion) return;
+            const image = await getImageBitmap(imageSource);
             const longestSide = Number(resolutionInput.value);
             const scale = longestSide / Math.max(image.width, image.height);
             const width = Math.max(1, Math.round(image.width * scale));
@@ -391,7 +421,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (typeof image.close === 'function') image.close();
 
             const imageData = context.getImageData(0, 0, width, height);
-            if (removeWhiteBackground.checked) clearEdgeWhite(imageData);
+            if (!removeBackgroundWithAi.checked || backgroundWarning) {
+                if (removeWhiteBackground.checked) clearEdgeWhite(imageData);
+            }
             const pixels = imageData.data;
             intensifyNeutralShadows(pixels);
             const palette = medianCutPalette(pixels, Number(paletteInput.value));
@@ -443,7 +475,10 @@ document.addEventListener('DOMContentLoaded', () => {
             selectedImage = file;
             pixelResult.hidden = false;
             copyBtn.disabled = false;
-            showImageFeedback(`Imagen convertida: ${width} × ${height} píxeles · hasta ${palette.length} colores.`);
+            const backgroundStatus = removeBackgroundWithAi.checked && !backgroundWarning
+                ? ' Fondo eliminado con IA.'
+                : '';
+            showImageFeedback(`Imagen convertida: ${width} × ${height} píxeles · hasta ${palette.length} colores.${backgroundStatus}${backgroundWarning}`);
         } catch (error) {
             if (requestVersion === generationVersion) {
                 emptyState.hidden = false;
@@ -468,6 +503,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     removeWhiteBackground.addEventListener('change', () => {
+        if (selectedImage) generateFromImage(selectedImage);
+    });
+    removeBackgroundWithAi.addEventListener('change', () => {
         if (selectedImage) generateFromImage(selectedImage);
     });
 
@@ -564,7 +602,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	if (!logoImg) return;
 
 	function openLogo() {
-		openImageLightbox(logoImg.src, "Logo Fiestas Patrias Per\u00fa", logoEl);
+		openImageLightbox(logoImg.src, "Logo", logoEl);
 	}
 
 	logoEl.addEventListener("click", openLogo);
