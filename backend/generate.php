@@ -33,16 +33,12 @@ $pattern = $patterns[$animalId];
 $matrix = $pattern['matrix'];
 $palette = $pattern['palette'];
 $height = count($matrix);
-$width = strlen($matrix[0]);
+$width = max(array_map('strlen', $matrix));
 $pixelSize = $pattern['pixelSize'] ?? 12;
 $shadows = [];
 
 foreach ($matrix as $rowIndex => $row) {
-    if (strlen($row) !== $width) {
-        http_response_code(500);
-        echo json_encode(['error' => 'El patrón solicitado no es válido.'], JSON_UNESCAPED_UNICODE);
-        exit;
-    }
+    $row = str_pad($row, $width, '.');
 
     for ($columnIndex = 0; $columnIndex < $width; $columnIndex++) {
         $symbol = $row[$columnIndex];
