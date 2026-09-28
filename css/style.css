@@ -714,3 +714,212 @@ h2 {
         transition-duration: 0.01ms !important;
     }
 }
+
+.logo{
+  position: absolute;
+  top: 12%;
+  left: 3%;
+  transform: rotate(-10deg);
+  z-index: 100;
+  width: 110px;
+  filter: drop-shadow(0 0 8px rgba(249, 143, 22, 0.65));
+  cursor: pointer;
+}
+
+.logo:before {
+  content: "";
+  display: block;
+  background: rgba(53, 51, 51, 0.12);
+  position: absolute;
+  top: -4px;
+  bottom: -4px;
+  left: -4px;
+  right: -4px;
+  border: 1px dashed rgba(227, 186, 232, 0.6);
+  border-radius: 6px;
+  z-index: 0;
+}
+
+.box {
+  background: #fff;
+  border-radius: 5px;
+  padding: 4px 6px;
+  border: 1px solid rgba(227, 186, 232, 0.5);
+  box-shadow:
+    0 3px 14px rgba(0, 0, 0, 0.5),
+    0 0 14px rgba(180, 100, 210, 0.35);
+  position: relative;
+  z-index: 1;
+  transition: transform 0.4s;
+}
+.box img {
+  width: 100%;
+  display: block;
+}
+.box:hover {
+    transform: translate(3px, 3px) scale(1.02);
+}
+
+.logo-lightbox {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background: rgba(6, 12, 30, 0.75);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.28s ease;
+    z-index: 1200;
+}
+
+.logo-lightbox--open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.logo-lightbox__img {
+    width: min(78vw, 560px);
+    max-height: 80vh;
+    object-fit: contain;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 26px rgba(255, 179, 107, 0.35);
+    transform: translate(var(--lbx), var(--lby)) scale(0.28) rotate(-12deg);
+    transition: transform 0.42s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.logo-lightbox--open .logo-lightbox__img {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+}
+
+.logo-lightbox--closing .logo-lightbox__img {
+    transform: translate(var(--lbx), var(--lby)) scale(0.28) rotate(-12deg);
+}
+
+.logo-lightbox__close {
+    position: fixed;
+    top: 18px;
+    right: 24px;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.16);
+    color: #ffffff;
+    font-size: 34px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.logo-lightbox__close:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* small phones */
+@media (max-width: 480px) {
+  .logo {
+    width: 95px;
+    top: 15px;
+    left: 15px;
+  }
+
+  .box {
+    padding: 2px 3px;
+    border-radius: 3px;
+  }
+
+  .logo:before {
+    top: -2px;
+    bottom: -2px;
+    left: -2px;
+    right: -2px;
+  }
+
+  #patriotic-title {
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+
+  .logo-lightbox__img {
+    width: min(90vw, 360px);
+  }
+
+  .logo-lightbox__close {
+    top: 10px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    font-size: 26px;
+  }
+}
+
+/* phones landscape + small tablets */
+@media (min-width: 481px) and (max-width: 768px) {
+  .logo {
+    width: 105px;
+    top: 10px;
+    left: 10px;
+  }
+
+  .box {
+    padding: 3px 5px;
+  }
+
+  #patriotic-title {
+    font-size: 12px;
+    letter-spacing: 1.2px;
+  }
+
+}
+
+/* tablets */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .logo {
+    width: 80px;
+    top: 5%;
+    left: 3%;
+  }
+
+  #patriotic-title {
+    font-size: 15px;
+  }
+}
+
+@keyframes noteFloat {
+  0% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-2px) rotate(2deg); }
+  100% { transform: translateY(0) rotate(0deg); }
+}
+
+@keyframes noteMelody {
+  0% { transform: translateY(0) translateX(0) rotate(0deg) scale(1); opacity: 1; }
+  25% { transform: translateY(-8px) translateX(5px) rotate(4deg) scale(1.08); opacity: 0.9; }
+  50% { transform: translateY(-16px) translateX(-3px) rotate(-3deg) scale(1.04); opacity: 0.8; }
+  75% { transform: translateY(-24px) translateX(4px) rotate(3deg) scale(1.08); opacity: 0.7; }
+  100% { transform: translateY(-32px) translateX(0) rotate(0deg) scale(1); opacity: 0.6; }
+}
+
+/* large screens */
+@media (min-width: 1400px) {
+  .logo {
+    width: 100px;
+  }
+
+  #patriotic-title {
+    font-size: 20px;
+    letter-spacing: 2.4px;
+  }
+}
+
+/* very large screens */
+@media (min-width: 1800px) {
+  .logo {
+    width: 120px;
+  }
+
+  #patriotic-title {
+    font-size: 24px;
+    letter-spacing: 3px;
+  }
+}
