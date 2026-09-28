@@ -52,6 +52,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const overlay = document.createElement("div");
         overlay.className = "logo-lightbox";
+        overlay.setAttribute("role", "dialog");
+        overlay.setAttribute("aria-modal", "true");
+        overlay.setAttribute("aria-label", `${imageAlt} ampliado`);
         overlay.style.setProperty("--lbx", dx + "px");
         overlay.style.setProperty("--lby", dy + "px");
 
@@ -72,6 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
         requestAnimationFrame(function () {
             requestAnimationFrame(function () {
                 overlay.classList.add("logo-lightbox--open");
+                closeBtn.focus();
             });
         });
 
@@ -87,6 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
             overlay.classList.add("logo-lightbox--closing");
             window.setTimeout(function () {
                 overlay.remove();
+                triggerElement.focus();
             }, 420);
         }
 

@@ -57,9 +57,9 @@ button {
 
 .site-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
-    padding: 24px 0;
+    padding: 16px 0;
     border-bottom: var(--border);
 }
 
@@ -715,49 +715,36 @@ h2 {
     }
 }
 
-.logo{
-  position: absolute;
-  top: 12%;
-  left: 3%;
-  transform: rotate(-10deg);
-  z-index: 100;
-  width: 110px;
-  filter: drop-shadow(0 0 8px rgba(249, 143, 22, 0.65));
-  cursor: pointer;
+.logo {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: clamp(160px, 19vw, 220px);
+    flex: 0 0 auto;
+    padding: 4px;
+    transform: rotate(-2deg);
+    border: 1px solid rgba(23, 22, 22, 0.8);
+    border-radius: 4px;
+    background: #fff;
+    box-shadow: 4px 4px 0 var(--ink), 0 8px 18px rgba(0, 0, 0, 0.22);
+    cursor: zoom-in;
+    transition: transform 160ms ease, box-shadow 160ms ease;
 }
 
-.logo:before {
-  content: "";
-  display: block;
-  background: rgba(53, 51, 51, 0.12);
-  position: absolute;
-  top: -4px;
-  bottom: -4px;
-  left: -4px;
-  right: -4px;
-  border: 1px dashed rgba(227, 186, 232, 0.6);
-  border-radius: 6px;
-  z-index: 0;
+.logo:hover {
+    transform: translateY(-2px) rotate(0deg);
+    box-shadow: 5px 6px 0 var(--ink), 0 10px 20px rgba(0, 0, 0, 0.24);
 }
 
-.box {
-  background: #fff;
-  border-radius: 5px;
-  padding: 4px 6px;
-  border: 1px solid rgba(227, 186, 232, 0.5);
-  box-shadow:
-    0 3px 14px rgba(0, 0, 0, 0.5),
-    0 0 14px rgba(180, 100, 210, 0.35);
-  position: relative;
-  z-index: 1;
-  transition: transform 0.4s;
+.logo:focus-visible {
+    outline: 4px solid var(--blue);
+    outline-offset: 5px;
 }
+
 .box img {
-  width: 100%;
-  display: block;
-}
-.box:hover {
-    transform: translate(3px, 3px) scale(1.02);
+    display: block;
+    width: 100%;
+    height: auto;
 }
 
 .logo-lightbox {
@@ -816,29 +803,10 @@ h2 {
     background: rgba(255, 255, 255, 0.3);
 }
 
-/* small phones */
+/* lightbox on phones */
 @media (max-width: 480px) {
   .logo {
-    width: 95px;
-    top: 15px;
-    left: 15px;
-  }
-
-  .box {
-    padding: 2px 3px;
-    border-radius: 3px;
-  }
-
-  .logo:before {
-    top: -2px;
-    bottom: -2px;
-    left: -2px;
-    right: -2px;
-  }
-
-  #patriotic-title {
-    font-size: 11px;
-    letter-spacing: 1px;
+    width: min(190px, 65vw);
   }
 
   .logo-lightbox__img {
@@ -854,38 +822,6 @@ h2 {
   }
 }
 
-/* phones landscape + small tablets */
-@media (min-width: 481px) and (max-width: 768px) {
-  .logo {
-    width: 105px;
-    top: 10px;
-    left: 10px;
-  }
-
-  .box {
-    padding: 3px 5px;
-  }
-
-  #patriotic-title {
-    font-size: 12px;
-    letter-spacing: 1.2px;
-  }
-
-}
-
-/* tablets */
-@media (min-width: 769px) and (max-width: 1024px) {
-  .logo {
-    width: 80px;
-    top: 5%;
-    left: 3%;
-  }
-
-  #patriotic-title {
-    font-size: 15px;
-  }
-}
-
 @keyframes noteFloat {
   0% { transform: translateY(0) rotate(0deg); }
   50% { transform: translateY(-2px) rotate(2deg); }
@@ -898,28 +834,4 @@ h2 {
   50% { transform: translateY(-16px) translateX(-3px) rotate(-3deg) scale(1.04); opacity: 0.8; }
   75% { transform: translateY(-24px) translateX(4px) rotate(3deg) scale(1.08); opacity: 0.7; }
   100% { transform: translateY(-32px) translateX(0) rotate(0deg) scale(1); opacity: 0.6; }
-}
-
-/* large screens */
-@media (min-width: 1400px) {
-  .logo {
-    width: 100px;
-  }
-
-  #patriotic-title {
-    font-size: 20px;
-    letter-spacing: 2.4px;
-  }
-}
-
-/* very large screens */
-@media (min-width: 1800px) {
-  .logo {
-    width: 120px;
-  }
-
-  #patriotic-title {
-    font-size: 24px;
-    letter-spacing: 3px;
-  }
 }
