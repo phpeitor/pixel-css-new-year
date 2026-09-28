@@ -4,7 +4,7 @@
 [![forthebadge](http://forthebadge.com/images/badges/built-with-love.svg)](https://www.linkedin.com/in/drphp/)
 
 <a href="https://www.instagram.com/amvsoft.tech/">
-  <img src="https://cdn.dribbble.com/userupload/16684162/file/original-973ea0fac89a69b31e63b30e08c024b7.png" alt="Instagram" width="600">
+  <img src="https://cdn.dribbble.com/userupload/45144748/file/01d86655ce850b259809348ec45c0196.png?resize=1200x900&vertical=center" alt="Instagram" width="600">
 </a>
 
 ## Funcionamiento
