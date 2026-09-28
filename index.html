@@ -25,21 +25,38 @@
     </header>
 
     <main class="app-shell">
-        <section class="intro" aria-labelledby="page-title">
-            <p class="eyebrow">GENERADOR CSS // 001</p>
-            <h1 id="page-title">Elige una criatura.<br><strong>Hazla píxel.</strong></h1>
-            <p class="intro-copy">Selecciona un emoji y convertiremos su matriz en una ilustración construida con CSS puro.</p>
-        </section>
 
         <section class="generator" aria-label="Generador de animales Pixel Art">
             <div class="selector-panel">
                 <div class="panel-heading">
                     <div>
                         <span class="step">PASO 01</span>
-                        <h2>Selecciona un animal</h2>
+                        <h2>Sube una imagen o elige un animal</h2>
                     </div>
                     <span id="animal-count" class="animal-count" aria-live="polite">-- criaturas</span>
                 </div>
+
+                <section class="image-import" aria-labelledby="image-import-title">
+                    <div class="image-import-heading">
+                        <p>Sube una imagen y conviértela en una cuadrícula CSS.</p>
+                    </div>
+                    <input id="image-input" class="visually-hidden" type="file" accept="image/*">
+                    <label id="image-dropzone" class="image-dropzone" for="image-input">
+                        <span class="upload-icon" aria-hidden="true">↑</span>
+                        <span><strong>Seleccionar imagen</strong><small>PNG, JPG, GIF o WebP · máx. 10 MB</small></span>
+                    </label>
+                    <div class="image-settings">
+                        <label class="background-toggle" for="remove-white-background">
+                            <input id="remove-white-background" type="checkbox" checked>
+                            <span>Quitar fondo blanco</span>
+                        </label>
+                        <label for="pixel-resolution">Resolución <output id="resolution-value">32 px</output></label>
+                        <input id="pixel-resolution" type="range" min="16" max="48" step="4" value="32">
+                        <label for="palette-size">Colores <output id="palette-value">8</output></label>
+                        <input id="palette-size" type="range" min="4" max="16" step="2" value="8">
+                    </div>
+                    <p id="image-feedback" class="image-feedback" role="status" aria-live="polite" hidden></p>
+                </section>
 
                 <div id="animal-list" class="animal-list" role="list" aria-busy="true"></div>
 
@@ -88,7 +105,7 @@
 
     <footer class="site-footer">
         <span>HECHO CON HTML + CSS + PHP</span>
-        <span>NO IMÁGENES. SOLO PÍXELES.</span>
+        <span>TUS IMÁGENES, CONVERTIDAS EN PÍXELES.</span>
     </footer>
 
     <script src="./js/script.js"></script>
