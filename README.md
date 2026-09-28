@@ -25,7 +25,7 @@ Pixel Fauna genera ilustraciones Pixel Art desde patrones de animales o imágene
 ## Arquitectura
 
 ```text
-Navegador ── PHP/Apache ── servicio Python local
+Navegador ── servidor web con PHP ── servicio Python local
     │                           ├── rembg: elimina el fondo
     │                           └── Pillow: recorta y cuantiza
     └── renderiza las celdas como CSS box-shadow
@@ -35,14 +35,14 @@ El servicio Python mantiene el modelo cargado para reutilizarlo entre solicitude
 
 ### Requisitos
 
-- Apache 2.4 con PHP 8.0 o superior.
+- Un servidor web compatible con PHP 8.0 o superior.
 - Extensiones PHP `curl` y `fileinfo` habilitadas.
 - Python 3.13. `rembg` no soporta actualmente Python 3.14.
 - Windows PowerShell para los scripts de instalación incluidos.
 
 ## Instalación local
 
-1. Clona o copia el proyecto dentro del directorio servido por Apache.
+1. Clona o copia el proyecto en el entorno donde ejecutes tu servidor web con PHP.
 2. Si aún no existe el archivo local de configuración, créalo desde PowerShell en la raíz del proyecto:
 
    ```powershell
@@ -64,13 +64,9 @@ El servicio Python mantiene el modelo cargado para reutilizarlo entre solicitude
 
    En el primer arranque se descargan los pesos del modelo `u2netp`; los siguientes arranques reutilizan la caché local.
 
-5. Inicia Apache y abre la URL local correspondiente, por ejemplo:
+5. Configura tu servidor web para servir la raíz del proyecto y ejecutar los archivos PHP. Luego abre la URL que hayas asignado.
 
-   ```text
-   http://localhost/pixel-css-new-year/
-   ```
-
-No abras `index.html` mediante `file://`: la interfaz necesita los endpoints PHP. Si Apache limita el tamaño de POST, configura `upload_max_filesize` y `post_max_size` en PHP a un valor de al menos `12M`.
+No abras `index.html` mediante `file://`: la interfaz necesita los endpoints PHP. Configura `upload_max_filesize` y `post_max_size` en PHP a un valor de al menos `12M` para aceptar imágenes de hasta 10 MB.
 
 ### Configuración (`.env`)
 
@@ -89,7 +85,7 @@ No abras `index.html` mediante `file://`: la interfaz necesita los endpoints PHP
 
 Al cambiar el puerto de `PYTHON_SERVICE_URL`, Python lo usa para enlazar su servidor y PHP construye los endpoints a partir de esa URL. Al cambiar las rutas, actualiza las variables correspondientes; reinicia Python para aplicar su configuración. `u2netp` prioriza tamaño y velocidad; otros modelos pueden requerir más descarga, memoria y tiempo.
 
-No añadas claves privadas ni credenciales a `.env`: en esta instalación Apache no permite reglas `.htaccess` y el archivo contiene solo configuración local no secreta. Para desplegarlo en un servidor, configura la denegación de archivos `.env` en el VirtualHost de Apache o usa variables de entorno del sistema.
+No guardes claves privadas ni credenciales en `.env`. Configura el servidor web para impedir el acceso HTTP a ese archivo; para secretos de producción, prefiere variables de entorno del proceso.
 
 ## Flujo de una imagen
 
