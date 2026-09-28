@@ -49,13 +49,14 @@ El servicio Python mantiene el modelo cargado para reutilizarlo entre solicitude
    Copy-Item .env.example .env
    ```
 
-3. Instala Python 3.13. Desde una terminal PowerShell, entra en `python_service` y crea el entorno virtual e instala `rembg`:
+3. Instala Python 3.13. Desde la raíz del proyecto, abre PowerShell en `python_service` y crea el entorno virtual e instala `rembg`:
 
    ```powershell
+   Set-Location .\python_service
    .\setup.ps1
    ```
 
-4. Inicia el servicio Python y deja esa terminal abierta:
+4. En esa terminal, inicia el servicio Python y déjalo en ejecución:
 
    ```powershell
    .\run.ps1
@@ -95,9 +96,9 @@ No añadas claves privadas ni credenciales a `.env`: en esta instalación Apache
 1. El navegador valida el tipo y el tamaño del archivo.
 2. `backend/remove-background.php` valida la carga y envía los bytes al servicio Python local.
 3. `rembg` devuelve un PNG con transparencia.
-4. `backend/pixelate-image.php` envía el PNG junto con los ajustes de resolución y colores.
+4. Si el fondo se eliminó con IA, `backend/pixelate-image.php` envía el PNG y los ajustes de resolución y colores al servicio Python.
 5. Pillow recorta los márgenes transparentes, conserva la proporción, reduce con LANCZOS, limita la paleta y aplica dithering Floyd–Steinberg.
-6. El navegador convierte cada píxel visible en una sombra CSS.
+6. El navegador convierte la cuadrícula resultante en sombras CSS. Si la IA no está disponible, utiliza la cuantización local de respaldo.
 
 Los controles permiten alternar entre **Vista normal, sin efecto pixel** y la imagen pixelada. La copia de CSS queda deshabilitada en vista normal. Al cambiar resolución o colores se reutiliza el PNG ya procesado, sin volver a ejecutar la eliminación de fondo.
 
@@ -162,6 +163,8 @@ Con el servicio Python activo, verifica su estado:
 ```powershell
 Invoke-WebRequest http://127.0.0.1:8765/health
 ```
+
+Si PHP devuelve `503`, comprueba que `run.ps1` sigue ejecutándose y que `PYTHON_SERVICE_URL` apunta al mismo host y puerto definidos en `.env`.
 
 ## Dependencias
 
