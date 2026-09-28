@@ -433,6 +433,25 @@ document.addEventListener('DOMContentLoaded', () => {
         return response.blob();
     }
 
+    async function requestPixelation(image, resolution, colors) {
+        const formData = new FormData();
+        formData.append('image', image, 'foreground.png');
+        formData.append('resolution', String(resolution));
+        formData.append('colors', String(colors));
+        const response = await fetch('./backend/pixelate-image.php', {
+            method: 'POST',
+            body: formData,
+            headers: { Accept: 'image/png, application/json' },
+        });
+
+        if (!response.ok) {
+            const error = await response.json().catch(() => null);
+            throw new Error(error?.error || 'No se pudo aplicar la cuantización de color.');
+        }
+
+        return response.blob();
+    }
+
     function colorToHex([red, green, blue]) {
         return `#${[red, green, blue].map((value) => value.toString(16).padStart(2, '0')).join('')}`;
     }
@@ -486,45 +505,91 @@ document.addEventListener('DOMContentLoaded', () => {
             const sourceWidth = image.width;
             const sourceHeight = image.height;
             const longestSide = Number(resolutionInput.value);
-            const scale = longestSide / Math.max(image.width, image.height);
-            const width = Math.max(1, Math.round(image.width * scale));
-            const height = Math.max(1, Math.round(image.height * scale));
-            const canvas = document.createElement('canvas');
-            canvas.width = width;
-            canvas.height = height;
-            const context = canvas.getContext('2d', { willReadFrequently: true });
-            context.imageSmoothingEnabled = true;
-            context.imageSmoothingQuality = 'high';
-            context.drawImage(image, 0, 0, width, height);
-            if (typeof image.close === 'function') image.close();
+            let pixelatedImage = null;
+            let pixelConversionWarning = '';
+            if (backgroundRemovedByAi) {
+                try {
+                    const pixelatedBlob = await requestPixelation(
+                        imageSource,
+                        longestSide,
+                        Number(paletteInput.value),
+                    );
+                    if (requestVersion !== generationVersion) {
+                        image.close?.();
+                        return;
+                    }
+                    pixelatedImage = await getImageBitmap(pixelatedBlob);
+                } catch (error) {
+                    pixelConversionWarning = ' Se usó la cuantización local como respaldo.';
+                }
+            }
+            if (requestVersion !== generationVersion) {
+                image.close?.();
+                pixelatedImage?.close?.();
+                return;
+            }
+
+            let width;
+            let height;
+            let canvas;
+            let context;
+            if (pixelatedImage) {
+                width = pixelatedImage.width;
+                height = pixelatedImage.height;
+                canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                context = canvas.getContext('2d', { willReadFrequently: true });
+                context.drawImage(pixelatedImage, 0, 0);
+                pixelatedImage.close?.();
+            } else {
+                const scale = longestSide / Math.max(image.width, image.height);
+                width = Math.max(1, Math.round(image.width * scale));
+                height = Math.max(1, Math.round(image.height * scale));
+                canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                context = canvas.getContext('2d', { willReadFrequently: true });
+                context.imageSmoothingEnabled = true;
+                context.imageSmoothingQuality = 'high';
+                context.drawImage(image, 0, 0, width, height);
+            }
+            image.close?.();
 
             const imageData = context.getImageData(0, 0, width, height);
             if (!backgroundRemovedByAi && removeWhiteBackground.checked) clearEdgeWhite(imageData);
             const pixels = imageData.data;
             intensifyNeutralShadows(pixels);
-            const palette = medianCutPalette(pixels, Number(paletteInput.value));
-            if (!palette.length) throw new Error('No se encontraron píxeles visibles en la imagen.');
+            const palette = pixelatedImage ? null : medianCutPalette(pixels, Number(paletteInput.value));
+            const outputColors = new Set();
 
             const shadows = [];
             for (let y = 0; y < height; y += 1) {
                 for (let x = 0; x < width; x += 1) {
                     const offset = (y * width + x) * 4;
                     if (pixels[offset + 3] < 40) continue;
-                    let nearest = palette[0];
-                    let nearestDistance = Infinity;
-                    for (const color of palette) {
-                        const red = pixels[offset] - color[0];
-                        const green = pixels[offset + 1] - color[1];
-                        const blue = pixels[offset + 2] - color[2];
-                        const distance = red * red + green * green + blue * blue;
-                        if (distance < nearestDistance) {
-                            nearest = color;
-                            nearestDistance = distance;
+                    let color = [pixels[offset], pixels[offset + 1], pixels[offset + 2]];
+                    if (palette) {
+                        let nearest = palette[0];
+                        let nearestDistance = Infinity;
+                        for (const paletteColor of palette) {
+                            const red = pixels[offset] - paletteColor[0];
+                            const green = pixels[offset + 1] - paletteColor[1];
+                            const blue = pixels[offset + 2] - paletteColor[2];
+                            const distance = red * red + green * green + blue * blue;
+                            if (distance < nearestDistance) {
+                                nearest = paletteColor;
+                                nearestDistance = distance;
+                            }
                         }
+                        color = nearest;
                     }
-                    shadows.push(`${x * 9}px ${y * 9}px 0 ${colorToHex(nearest)}`);
+                    const hex = colorToHex(color);
+                    outputColors.add(hex);
+                    shadows.push(`${x * 9}px ${y * 9}px 0 ${hex}`);
                 }
             }
+            if (outputColors.size === 0) throw new Error('No se encontraron píxeles visibles en la imagen.');
 
             if (requestVersion !== generationVersion) return;
             const imageName = file.name.replace(/\.[^.]+$/, '').replace(/[<>\r\n]/g, '').slice(0, 60) || 'Imagen';
@@ -556,7 +621,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const backgroundStatus = backgroundRemovedByAi
                 ? ' Fondo eliminado con IA.'
                 : '';
-            showImageFeedback(`Imagen convertida: ${width} × ${height} píxeles · hasta ${palette.length} colores.${backgroundStatus}${backgroundWarning}`);
+            showImageFeedback(`Imagen convertida: ${width} × ${height} píxeles · ${outputColors.size} colores.${backgroundStatus}${backgroundWarning}${pixelConversionWarning}`);
         } catch (error) {
             if (requestVersion === generationVersion) {
                 emptyState.hidden = false;

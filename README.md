@@ -7,7 +7,8 @@ Generador de Pixel Art desde animales o imágenes, con salida CSS `box-shadow`.
 1. Para animales, PHP carga una matriz de `backend/patterns.php` y la convierte en CSS `box-shadow`.
 2. Para imágenes, PHP valida el archivo y lo pasa al servicio local de Python.
 3. Python ejecuta `rembg` con el modelo `u2netp` y devuelve un PNG transparente.
-4. El navegador reduce la imagen transparente, limita su paleta y genera el CSS de píxeles.
+4. Python recorta el espacio transparente, reduce con LANCZOS, cuantiza la paleta con Pillow y aplica dithering Floyd–Steinberg.
+5. El navegador convierte la pequeña imagen resultante a sombras CSS.
 
 ## Requisitos
 
@@ -46,9 +47,11 @@ En el primer inicio se descargan los pesos del modelo `u2netp`; quedan en la cac
 
 En los controles de imagen se puede activar **Vista normal, sin efecto pixel** para inspeccionar el PNG recortado antes de pixelarlo. En ese modo se desactiva la copia de CSS hasta volver a la vista pixelada.
 
+La conversión usa la biblioteca Pillow, ya instalada como dependencia de `rembg`: recorta el contenido transparente para aprovechar la cuadrícula, conserva la proporción, limita la paleta solicitada y distribuye tonos con dithering Floyd–Steinberg. Si falla este endpoint, el frontend conserva una cuantización local de respaldo.
+
 Para cambiar el modelo, define `REMBG_MODEL` antes de ejecutar `run.ps1`. `u2netp` es la opción ligera usada por defecto; modelos más pesados pueden mejorar los bordes a cambio de espacio y tiempo.
 
-Contrato del proxy PHP: `POST backend/remove-background.php` con un campo multipart `image` (PNG/JPG/GIF/WebP, hasta 10 MB). Responde con `image/png` transparente; los errores se devuelven como JSON con un estado HTTP adecuado. El servicio Python interno ofrece `GET /health` y `POST /remove-background` en loopback.
+Contrato de proxies PHP: `POST backend/remove-background.php` con un campo multipart `image` y `POST backend/pixelate-image.php` con `image`, `resolution` y `colors`. Ambos aceptan PNG/JPG/GIF/WebP de hasta 10 MB y responden con `image/png`; los errores se devuelven como JSON con un estado HTTP adecuado. El servicio Python interno ofrece `GET /health`, `POST /remove-background` y `POST /pixelate` en loopback.
 
 ## Estructura
 

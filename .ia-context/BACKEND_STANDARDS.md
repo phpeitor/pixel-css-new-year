@@ -19,6 +19,7 @@ Para imágenes:
 2. Enviar los bytes al servicio enlazado únicamente a `127.0.0.1`.
 3. Devolver PNG con transparencia; nunca exponer trazas o rutas internas.
 4. Mantener el modelo cargado en memoria en el proceso Python; no iniciar Python por cada solicitud PHP.
+5. Cuantizar en `/pixelate` con Pillow: recortar alfa vacío, preservar proporción, limitar la paleta solicitada y retornar una cuadrícula PNG con transparencia.
 
 ## Generación CSS
 
