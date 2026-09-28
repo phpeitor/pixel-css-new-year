@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const paletteInput = document.getElementById('palette-size');
     const paletteValue = document.getElementById('palette-value');
     const removeWhiteBackground = document.getElementById('remove-white-background');
-    const HIDDEN_ANIMALS = new Set(['perro', 'gato', 'zorro', 'panda']);
+    const HIDDEN_ANIMALS = new Set(['perro', 'gato', 'zorro', 'panda', 'ballena', 'tigre']);
     const GENERATION_DELAY = 700;
     let generationVersion = 0;
     let currentAnimal = null;
@@ -263,6 +263,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function intensifyNeutralShadows(pixels) {
+        for (let index = 0; index < pixels.length; index += 4) {
+            if (pixels[index + 3] < 40) continue;
+
+            const red = pixels[index];
+            const green = pixels[index + 1];
+            const blue = pixels[index + 2];
+            const lightness = (red + green + blue) / 3;
+            const chroma = Math.max(red, green, blue) - Math.min(red, green, blue);
+            if (lightness >= 205 || chroma >= 46) continue;
+
+            const intensified = 255 * ((lightness / 255) ** 1.8);
+            pixels[index] = Math.max(0, Math.round(intensified + (red - lightness) * 0.4));
+            pixels[index + 1] = Math.max(0, Math.round(intensified + (green - lightness) * 0.4));
+            pixels[index + 2] = Math.max(0, Math.round(intensified + (blue - lightness) * 0.4));
+        }
+    }
+
     function colorToHex([red, green, blue]) {
         return `#${[red, green, blue].map((value) => value.toString(16).padStart(2, '0')).join('')}`;
     }
@@ -305,6 +323,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const imageData = context.getImageData(0, 0, width, height);
             if (removeWhiteBackground.checked) clearEdgeWhite(imageData);
             const pixels = imageData.data;
+            intensifyNeutralShadows(pixels);
             const palette = medianCutPalette(pixels, Number(paletteInput.value));
             if (!palette.length) throw new Error('No se encontraron píxeles visibles en la imagen.');
 
