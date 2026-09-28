@@ -1,14 +1,34 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from io import BytesIO
 import os
+from pathlib import Path
 from urllib.parse import parse_qs, urlsplit
 
 from PIL import Image, ImageStat
 from rembg import new_session, remove
 
 
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+ENV_FILE = PROJECT_ROOT / ".env"
+if ENV_FILE.is_file():
+    for raw_line in ENV_FILE.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        value = value.strip().strip("\"'")
+        os.environ.setdefault(key.strip(), value)
+
+SERVICE_URL = os.environ.get("PYTHON_SERVICE_URL", "http://127.0.0.1:8765")
+SERVICE_ADDRESS = urlsplit(SERVICE_URL)
+if SERVICE_ADDRESS.scheme != "http" or SERVICE_ADDRESS.hostname not in {"127.0.0.1", "localhost"}:
+    raise RuntimeError("PYTHON_SERVICE_URL must use http://127.0.0.1 or localhost")
+
 HOST = "127.0.0.1"
-PORT = 8765
+PORT = SERVICE_ADDRESS.port or 8765
+HEALTH_PATH = "/" + os.environ.get("PYTHON_HEALTH_PATH", "/health").strip("/")
+REMOVE_BACKGROUND_PATH = "/" + os.environ.get("PYTHON_REMOVE_BACKGROUND_PATH", "/remove-background").strip("/")
+PIXELATE_PATH = "/" + os.environ.get("PYTHON_PIXELATE_PATH", "/pixelate").strip("/")
 MAX_IMAGE_BYTES = 10 * 1024 * 1024
 MODEL_NAME = os.environ.get("REMBG_MODEL", "u2netp")
 SESSION = None
@@ -27,7 +47,7 @@ class BackgroundRemovalHandler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_GET(self) -> None:
-        if self.path != "/health":
+        if self.path != HEALTH_PATH:
             self.send_json_error(404, "Not found")
             return
 
@@ -40,13 +60,13 @@ class BackgroundRemovalHandler(BaseHTTPRequestHandler):
 
     def do_POST(self) -> None:
         request = urlsplit(self.path)
-        if request.path not in {"/remove-background", "/pixelate"}:
+        if request.path not in {REMOVE_BACKGROUND_PATH, PIXELATE_PATH}:
             self.send_json_error(404, "Not found")
             return
 
         resolution = None
         color_count = None
-        if request.path == "/pixelate":
+        if request.path == PIXELATE_PATH:
             options = parse_qs(request.query)
             try:
                 resolution = int(options.get("resolution", [""])[0])
@@ -74,7 +94,7 @@ class BackgroundRemovalHandler(BaseHTTPRequestHandler):
             return
 
         try:
-            if request.path == "/pixelate":
+            if request.path == PIXELATE_PATH:
                 png_bytes = pixelate_image(image_bytes, resolution, color_count)
             else:
                 removed_image = remove(image_bytes, session=SESSION)
@@ -108,7 +128,7 @@ def main() -> None:
     print(f"Loading rembg model '{MODEL_NAME}' (first startup may download model weights)...", flush=True)
     SESSION = new_session(MODEL_NAME)
     server = HTTPServer((HOST, PORT), BackgroundRemovalHandler)
-    print(f"Background-removal service ready at http://{HOST}:{PORT}", flush=True)
+    print(f"Python image service ready at http://{HOST}:{PORT}", flush=True)
     try:
         server.serve_forever()
     except KeyboardInterrupt:

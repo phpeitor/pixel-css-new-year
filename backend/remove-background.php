@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+require_once __DIR__ . '/config.php';
+
 header('X-Content-Type-Options: nosniff');
 header('Cache-Control: no-store');
 
@@ -42,7 +44,8 @@ if ($imageContents === false) {
     respondWithError(400, 'No se pudo leer la imagen.');
 }
 
-$curl = curl_init('http://127.0.0.1:8765/remove-background');
+$config = appConfig();
+$curl = curl_init(pythonServiceEndpoint($config['PYTHON_REMOVE_BACKGROUND_PATH']));
 curl_setopt_array($curl, [
     CURLOPT_POST => true,
     CURLOPT_POSTFIELDS => $imageContents,
@@ -51,8 +54,8 @@ curl_setopt_array($curl, [
         'Accept: image/png',
     ],
     CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_CONNECTTIMEOUT => 2,
-    CURLOPT_TIMEOUT => 120,
+    CURLOPT_CONNECTTIMEOUT => (int) $config['PYTHON_CONNECT_TIMEOUT'],
+    CURLOPT_TIMEOUT => (int) $config['PYTHON_REMOVE_BACKGROUND_TIMEOUT'],
 ]);
 
 $result = curl_exec($curl);

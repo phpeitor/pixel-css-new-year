@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+require_once __DIR__ . '/config.php';
+
 header('X-Content-Type-Options: nosniff');
 header('Cache-Control: no-store');
 
@@ -51,8 +53,10 @@ if ($imageContents === false) {
     respondWithError(400, 'No se pudo leer la imagen.');
 }
 
+$config = appConfig();
 $url = sprintf(
-    'http://127.0.0.1:8765/pixelate?resolution=%d&colors=%d',
+    '%s?resolution=%d&colors=%d',
+    pythonServiceEndpoint($config['PYTHON_PIXELATE_PATH']),
     $resolution,
     $colors,
 );
@@ -65,8 +69,8 @@ curl_setopt_array($curl, [
         'Accept: image/png',
     ],
     CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_CONNECTTIMEOUT => 2,
-    CURLOPT_TIMEOUT => 30,
+    CURLOPT_CONNECTTIMEOUT => (int) $config['PYTHON_CONNECT_TIMEOUT'],
+    CURLOPT_TIMEOUT => (int) $config['PYTHON_PIXELATE_TIMEOUT'],
 ]);
 
 $result = curl_exec($curl);
