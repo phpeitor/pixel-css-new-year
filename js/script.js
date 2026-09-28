@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function buildPortableCode(animal) {
         const shadows = animal.boxShadow
             .split(',')
-            .map((shadow) => `    ${shadow.trim()};`)
+            .map((shadow, index, list) => `    ${shadow.trim()}${index === list.length - 1 ? ';' : ','}`)
             .join('\n');
 
         return `<!-- Pixel Art: ${animal.name} -->
@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
     background: transparent;
     image-rendering: pixelated;
     box-shadow:
-${shadows};
+${shadows}
 }
 </style>`;
     }

@@ -38,6 +38,8 @@ No abras `index.html` directamente mediante `file://`, ya que el frontend necesi
 
 Añade una entrada a `backend/patterns.php` con un identificador, nombre, emoji, paleta y matriz rectangular. Usa `.` para las celdas transparentes y asegúrate de declarar en la paleta todos los demás símbolos. Puedes definir `pixelSize` para ajustar la escala de patrones más detallados.
 
+El catálogo actual incluye perro, gato, zorro, panda, rana, unicornio, narval, ballena, elefante y tigre.
+
 ## Dependencias
 
 El MVP no usa paquetes externos de PHP, por lo que no necesita `composer.json` ni `composer install`. Composer solo se incorporará cuando exista una dependencia real que lo justifique.
