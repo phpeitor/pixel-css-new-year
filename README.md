@@ -35,7 +35,7 @@ No abras `index.html` directamente mediante `file://`, ya que el frontend necesi
 
 La app procesa imágenes mediante un servicio local, sin enviar archivos a un proveedor externo. Mantén el servicio Python en ejecución en una terminal mientras usas Apache.
 
-La configuración compartida está en `.env` (plantilla: `.env.example`). PHP y Python leen el mismo archivo. Cambia `PYTHON_SERVICE_URL` para usar otro puerto local y ajusta los paths, timeouts o modelo según necesites. El archivo `.env` está excluido de Git y bloqueado para solicitudes web por `.htaccess`.
+La configuración compartida está en `.env` (plantilla: `.env.example`). PHP y Python leen el mismo archivo. Cambia `PYTHON_SERVICE_URL` para usar otro puerto local y ajusta los paths, timeouts o modelo según necesites. El archivo `.env` está excluido de Git y solo contiene ajustes locales no secretos; no guardes claves privadas ahí bajo el Apache actual.
 
 Al clonar el proyecto por primera vez, crea tu configuración local con `Copy-Item .env.example .env` desde PowerShell. El repositorio trae valores por defecto si el archivo aún no existe.
 
